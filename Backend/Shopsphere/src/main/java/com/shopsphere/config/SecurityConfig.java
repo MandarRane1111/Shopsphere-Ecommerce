@@ -70,23 +70,23 @@ public class SecurityConfig {
     
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-            List.of("http://localhost:5173",
-            		"https://shopsphere-ecommerce-pied.vercel.app")
-        );
+        configuration.setAllowedOriginPatterns(List.of(
+            "http://localhost:5173",
+            "https://shopsphere-ecommerce-pied.vercel.app",
+            "https://*.vercel.app"
+        ));
 
-        configuration.setAllowedMethods(
-            List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-        );
-        
+        configuration.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
+
+        configuration.setAllowedHeaders(List.of(
+            "Authorization", "Content-Type", "Accept", "Origin"
+        ));
+
         configuration.setAllowCredentials(true);
-
-        configuration.setAllowedHeaders(
-            List.of("Authorization", "Content-Type")
-        );
 
         UrlBasedCorsConfigurationSource source =
             new UrlBasedCorsConfigurationSource();
