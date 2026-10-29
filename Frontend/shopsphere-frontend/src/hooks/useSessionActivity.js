@@ -4,7 +4,7 @@ import API_BASE_URL from "../services/apiConfig";
 
 const API_URL = `${API_BASE_URL}/session/activity`;
 const ACTIVITY_INTERVAL = 30000; // 30 seconds
-const INACTIVITY_TIMEOUT = 3 * 60 * 1000; // 3 minutes
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 3 minutes
 
 export default function useSessionActivity() {
   useEffect(() => {
