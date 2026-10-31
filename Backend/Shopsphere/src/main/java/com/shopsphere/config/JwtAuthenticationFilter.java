@@ -1,3 +1,4 @@
+
 package com.shopsphere.config;
 
 import java.io.IOException;
@@ -18,7 +19,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -39,51 +39,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
-
             String token = header.substring(7);
 
             try {
                 String email = jwtService.extractEmail(token);
 
-                if (email != null &&
-                    SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (email != null
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     User user = userRepository.findByEmail(email).orElse(null);
 
-                    HttpSession session = request.getSession(false);
-
-                    String sessionEmail = session != null
-                            ? (String) session.getAttribute("userEmail")
-                            : null;
-
                     if (user != null
-                            && jwtService.isTokenValid(token, user.getEmail())
-                            && ("ADMIN".equals(user.getRole())
-                                || user.getEmail().equals(sessionEmail))) {
+                            && jwtService.isTokenValid(token, user.getEmail())) {
 
                         var authorities = List.of(
-                            new SimpleGrantedAuthority("ROLE_" + user.getRole())
-                        );
+                                new SimpleGrantedAuthority("ROLE_" + user.getRole()));
 
                         var authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                user.getEmail(),
-                                null,
-                                authorities
-                            );
+                                new UsernamePasswordAuthenticationToken(
+                                        user.getEmail(),
+                                        null,
+                                        authorities);
 
                         SecurityContextHolder.getContext()
-                            .setAuthentication(authentication);
+                                .setAuthentication(authentication);
                     }
                 }
-
-
-} catch (Exception e) {
-    System.err.println("JWT authentication failed:");
-    e.printStackTrace();
-    SecurityContextHolder.clearContext();
-}
-
+            } catch (Exception e) {
+                SecurityContextHolder.clearContext();
+                System.err.println("JWT authentication failed: "
+                        + e.getClass().getSimpleName());
+            }
         }
 
         filterChain.doFilter(request, response);
