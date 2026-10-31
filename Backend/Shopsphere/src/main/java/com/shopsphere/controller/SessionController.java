@@ -1,8 +1,10 @@
+
 package com.shopsphere.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,19 +19,17 @@ public class SessionController {
 
     @PostMapping("/activity")
     public ResponseEntity<Void> recordActivity(
-            HttpServletRequest request) {
+            Authentication authentication) {
 
-        HttpSession session = request.getSession(false);
+        if (authentication == null ||
+            !authentication.isAuthenticated()) {
 
-        if (session == null ||
-            session.getAttribute("userEmail") == null) {
-
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         return ResponseEntity.noContent().build();
     }
-    
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             HttpServletRequest request,
@@ -43,7 +43,7 @@ public class SessionController {
 
         response.setHeader(
             HttpHeaders.SET_COOKIE,
-            "JSESSIONID=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax"
+            "JSESSIONID=; Path=/; HttpOnly; Max-Age=0; SameSite=None; Secure"
         );
 
         return ResponseEntity
