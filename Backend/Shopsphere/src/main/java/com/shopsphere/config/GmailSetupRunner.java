@@ -20,12 +20,11 @@ public class GmailSetupRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        System.out.println(">>> GmailSetupRunner started");
 
         String authorizationUrl =
                 gmailOAuthService.generateAuthorizationUrl();
 
-        System.out.println(
-                "Gmail OAuth setup URL: " + authorizationUrl
-        );
+        System.out.println("Gmail OAuth setup URL: " + authorizationUrl);
     }
 }
