@@ -24,8 +24,8 @@ public class GmailOAuthService {
     @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
-    private static final String REDIRECT_URI =
-            "http://localhost:8080/oauth2/callback";
+    @Value("${GMAIL_REDIRECT_URI:http://localhost:8080/oauth2/callback}")
+    private String redirectUri;
 
     private static final String SCOPE =
             "https://www.googleapis.com/auth/gmail.send";
@@ -40,7 +40,7 @@ public class GmailOAuthService {
 
         return "https://accounts.google.com/o/oauth2/v2/auth"
                 + "?client_id=" + encode(clientId)
-                + "&redirect_uri=" + encode(REDIRECT_URI)
+                + "&redirect_uri=" + encode(redirectUri)
                 + "&response_type=code"
                 + "&scope=" + encode(SCOPE)
                 + "&access_type=offline"
@@ -71,7 +71,7 @@ if (createdAt == null ||
                 clientId,
                 clientSecret,
                 code,
-                REDIRECT_URI
+                redirectUri
         ).execute();
     }
 
